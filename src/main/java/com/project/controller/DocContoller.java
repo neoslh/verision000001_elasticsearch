@@ -21,6 +21,7 @@ public class DocContoller {
 
 	@Autowired
 	DocServices docservice;
+	
 	@Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
  
@@ -39,6 +40,9 @@ public class DocContoller {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ResponseEntity<Void> addDocument(@RequestBody Doc d,UriComponentsBuilder ucBuilder) {
 		
+		elasticsearchTemplate.deleteIndex(Doc.class);
+		elasticsearchTemplate.createIndex(Doc.class);
+		elasticsearchTemplate.putMapping(Doc.class);
 		System.out.println(d.getContent());
 		docservice.addDoc(d);
 

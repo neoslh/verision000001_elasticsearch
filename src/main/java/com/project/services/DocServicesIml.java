@@ -13,9 +13,7 @@ public class DocServicesIml implements DocServices {
 	@Autowired
 	private DocRepository docRepository;
 
-	
-
-	static {
+		static {
 		D = new Doc();
 		D.setId("444");
 		D.setTitle("titre 2");

@@ -2,12 +2,16 @@ package com.project.models;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @Document(indexName = "doc", type = "doc")
 public class Doc {
 	@Id
 	private String id;
 	private String title;
+	
+	@Field(type=FieldType.Float)
 	private String content;
 	
 	

@@ -1,22 +1,13 @@
 package com.project.comfig;
 
-import java.util.Properties;
-
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.node.NodeBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.elasticsearch.client.TransportClientFactoryBean;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -28,6 +19,7 @@ import static org.apache.commons.lang.StringUtils.*;
 import static org.elasticsearch.common.settings.ImmutableSettings.*;
 
 import org.elasticsearch.common.settings.Settings;
+
 @Configuration
 @EnableWebMvc
 @EnableElasticsearchRepositories(basePackages = "com.project.repository")
@@ -35,7 +27,8 @@ import org.elasticsearch.common.settings.Settings;
 @PropertySource(value = "classpath:elasticsearch.properties")
 public class Config {
 
-	private static final Logger logger = LoggerFactory.getLogger(TransportClientFactoryBean.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(TransportClientFactoryBean.class);
 	private String clusterNodes = "127.0.0.1:9300";
 	private String clusterName = "elasticsearch";
 	private Boolean clientTransportSniff = true;
@@ -45,62 +38,52 @@ public class Config {
 	private TransportClient client;
 	static final String COLON = ":";
 	static final String COMMA = ",";
-	
-	
 
 	protected void buildClient() throws Exception {
 		client = new TransportClient(settings());
-		Assert.hasText(clusterNodes, "[Assertion failed] clusterNodes settings missing.");
+		Assert.hasText(clusterNodes,
+				"[Assertion failed] clusterNodes settings missing.");
 		for (String clusterNode : split(clusterNodes, COMMA)) {
 			String hostName = substringBefore(clusterNode, COLON);
 			String port = substringAfter(clusterNode, COLON);
-			Assert.hasText(hostName, "[Assertion failed] missing host name in 'clusterNodes'");
-			Assert.hasText(port, "[Assertion failed] missing port in 'clusterNodes'");
+			Assert.hasText(hostName,
+					"[Assertion failed] missing host name in 'clusterNodes'");
+			Assert.hasText(port,
+					"[Assertion failed] missing port in 'clusterNodes'");
 			logger.info("adding transport node : " + clusterNode);
-			client.addTransportAddress(new InetSocketTransportAddress(hostName, Integer.valueOf(port)));
+			client.addTransportAddress(new InetSocketTransportAddress(hostName,
+					Integer.valueOf(port)));
 		}
 		client.connectedNodes();
 	}
 
 	private Settings settings() {
-			return settingsBuilder()
+		return settingsBuilder()
 				.put("cluster.name", clusterName)
 				.put("client.transport.sniff", clientTransportSniff)
-				.put("client.transport.ignore_cluster_name", clientIgnoreClusterName)
+				.put("client.transport.ignore_cluster_name",
+						clientIgnoreClusterName)
 				.put("client.transport.ping_timeout", clientPingTimeout)
-				.put("client.transport.nodes_sampler_interval", clientNodesSamplerInterval)
-				.build();
+				.put("client.transport.nodes_sampler_interval",
+						clientNodesSamplerInterval).build();
 	}
-	
-	
+
 	@Bean
 	public ElasticsearchOperations elasticsearchTemplate() {
-    	try {
+		try {
 			buildClient();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        return new ElasticsearchTemplate(client);
-    }
+		return new ElasticsearchTemplate(client);
+	}
 
 }
-
-
 
 /*
- D={
-id:"8888888888888888888888888888",
-		title:"tttt",
-		content:"ooooo",
-}
-$.ajax({
-        url: "http://localhost:8080/project/add",
-        type: 'post',
-        dataType: 'json',
-              data:JSON.stringify(D),
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                 console.log(data);
-            }
-        });
- * */
+ * D={ id:"8888888888888888888888888888", title:"tttt", content:"ooooo", }
+ * $.ajax({ url: "http://localhost:8080/project/add", type: 'post', dataType:
+ * 'json', data:JSON.stringify(D), contentType:
+ * "application/json; charset=utf-8", success: function (data) {
+ * console.log(data); } });
+ */
