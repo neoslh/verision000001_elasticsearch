@@ -13,6 +13,8 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.util.Assert;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.apache.commons.lang.StringUtils.*;
@@ -78,12 +80,19 @@ public class Config {
 		return new ElasticsearchTemplate(client);
 	}
 
+	@Bean
+	public MultipartResolver multipartResolver() {
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+		multipartResolver.setMaxUploadSize(5 * 1024 * 1024);
+		return multipartResolver;
+	}
+
 }
 
 /*
- * D={ id:"8888888888888888888888888888", title:"tttt", content:"ooooo", }
- * $.ajax({ url: "http://localhost:8080/project/add", type: 'post', dataType:
- * 'json', data:JSON.stringify(D), contentType:
- * "application/json; charset=utf-8", success: function (data) {
- * console.log(data); } });
+  D={ id:"8888888888888888888888888888", title:"tttt", content:"ooooo", }
+ $.ajax({ url: "http://localhost:8080/project/add", type: 'post', dataType:
+  'json', data:JSON.stringify(D), contentType:
+  "application/json; charset=utf-8", success: function (data) {
+ console.log(data); } });
  */
